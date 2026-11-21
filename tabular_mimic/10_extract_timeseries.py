@@ -110,9 +110,12 @@ def build_static(cohort, d):
 def main():
     ap = argparse.ArgumentParser(description="Extract cohort and 12xN time-series grid from MIMIC")
     ap.add_argument("--dataset", choices=["mimic3", "mimic4"], default=C.DATASET, help="MIMIC dataset version")
-    ap.add_argument("--vitals", type=int, choices=[5, 10], default=C.N_VITALS, help="Number of vitals in grid (10 -> 12x10, 5 -> 12x5)")
+    ap.add_argument("--vitals", type=int, choices=[5, 10], default=C.N_VITALS, help="Number of vitals (10->12x10, 5->12x5)")
+    ap.add_argument("--grid", default=None, help="Grid shorthand e.g. 12x10 or 12x5 (overrides --vitals)")
     ap.add_argument("--target", choices=["los7", "mortality"], default=C.TARGET, help="Prediction target")
     args = ap.parse_args()
+    if args.grid:                                       # e.g. "12x10" -> vitals=10
+        args.vitals = int(args.grid.split("x")[1])
 
     # Apply overrides if provided
     C.DATASET = args.dataset

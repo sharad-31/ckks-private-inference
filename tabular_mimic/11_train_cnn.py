@@ -70,11 +70,14 @@ def main():
     ap = argparse.ArgumentParser(description="Train plaintext hybrid CNN and static LR baseline on MIMIC")
     ap.add_argument("--dataset", choices=["mimic3", "mimic4"], default=C.DATASET, help="MIMIC dataset")
     ap.add_argument("--vitals", type=int, choices=[5, 10], default=C.N_VITALS, help="Vitals grid width")
+    ap.add_argument("--grid", default=None, help="Grid shorthand e.g. 12x10 or 12x5 (overrides --vitals)")
     ap.add_argument("--epochs", type=int, default=C.EPOCHS, help="Maximum epochs")
     ap.add_argument("--batch", type=int, default=C.BATCH, help="Batch size")
     ap.add_argument("--lr", type=float, default=C.LR, help="Learning rate")
     ap.add_argument("--seed", type=int, default=C.SEED, help="Random seed")
     args = ap.parse_args()
+    if args.grid:                                       # e.g. "12x10" -> vitals=10
+        args.vitals = int(args.grid.split("x")[1])
 
     # Apply configuration
     C.DATASET = args.dataset

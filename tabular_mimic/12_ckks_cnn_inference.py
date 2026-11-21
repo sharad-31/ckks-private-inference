@@ -54,6 +54,9 @@ def infer(args):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--dataset", choices=["mimic3", "mimic4"], default=C.DATASET, help="MIMIC dataset")
+    ap.add_argument("--vitals", type=int, choices=[5, 10], default=C.N_VITALS, help="Vitals grid width")
+    ap.add_argument("--grid", default=None, help="Grid shorthand e.g. 12x10 or 12x5 (overrides --vitals)")
     ap.add_argument("--preset", default="precise", choices=list(C.PRESETS))
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--split", default="all", choices=["all", "train", "val", "test"],
@@ -61,6 +64,14 @@ def main():
     ap.add_argument("--n", type=int, default=0, help="debug: only first n patients (0 = no limit)")
     ap.add_argument("--chunk", type=int, default=2000, help="patients per saved chunk (resume point)")
     a = ap.parse_args()
+    if a.grid:                                          # e.g. "12x10" -> vitals=10
+        a.vitals = int(a.grid.split("x")[1])
+    # Apply dataset/grid overrides so C.TAG, C.MODELS etc. are correct
+    C.DATASET = a.dataset
+    C.N_VITALS = a.vitals
+    C.GRID = (C.N_BINS, C.N_VITALS)
+    C.KERNEL_W = C.N_VITALS
+    C.TAG = f"{C.DATASET}_{C.N_BINS}x{C.N_VITALS}_{C.TARGET}"
 
     W_ = json.load(open(C.MODELS / f"cnn_{C.TAG}.json"))
     assert tuple(W_["grid"]) == C.GRID, "model trained with a different grid - rerun 10 & 11"
