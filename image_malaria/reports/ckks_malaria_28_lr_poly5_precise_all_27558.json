@@ -1,0 +1,69 @@
+{
+  "tag": "malaria_28",
+  "dataset": "malaria",
+  "model": "lr",
+  "poly": 5,
+  "preset": "precise",
+  "split": "all",
+  "sec_per_patient_wall": 0.05752089787692305,
+  "total_sec": 1585.1609036922455,
+  "workers": 8,
+  "poly_interval": 5.8953680992126465,
+  "poly_coefs": [
+    0.21842227940520512,
+    -0.008046566535025583,
+    0.0001252187395356511
+  ],
+  "n": 27558,
+  "auroc_plain": 0.7360930235213696,
+  "auroc_enc": 0.7360934475161205,
+  "acc_plain": 0.6316133246244284,
+  "acc_enc": 0.6196385804485086,
+  "err_mean": 0.012593213332702838,
+  "err_max": 0.020591642778822083,
+  "err_signed_mean": 0.0001426715123315672,
+  "class_flips": 770,
+  "acc_enc_calibrated": 0.6316133246244284,
+  "class_flips_calibrated": 0,
+  "per_split": {
+    "train": {
+      "n": 19324,
+      "auroc_plain": 0.7249588501975794,
+      "auroc_enc": 0.7249589894569415,
+      "acc_plain": 0.6266300972883461,
+      "acc_enc": 0.6154522873111157,
+      "err_mean": 0.012556874222141629,
+      "err_max": 0.020591642778822083,
+      "err_signed_mean": 0.0010185874150511207,
+      "class_flips": 574,
+      "acc_enc_calibrated": 0.6266300972883461,
+      "class_flips_calibrated": 0
+    },
+    "val": {
+      "n": 4155,
+      "auroc_plain": 0.7145961382241989,
+      "auroc_enc": 0.7145956745588689,
+      "acc_plain": 0.6108303249097473,
+      "acc_enc": 0.5966305655836341,
+      "err_mean": 0.01230825344662799,
+      "err_max": 0.020591586335512835,
+      "err_signed_mean": -0.0013386877112290599,
+      "class_flips": 99,
+      "acc_enc_calibrated": 0.6108303249097473,
+      "class_flips_calibrated": 0
+    },
+    "test": {
+      "n": 4079,
+      "auroc_plain": 0.8066315750900915,
+      "auroc_enc": 0.8066378431650502,
+      "acc_plain": 0.6763912723706791,
+      "acc_enc": 0.6629075753861241,
+      "err_mean": 0.013055636794121273,
+      "err_max": 0.02059122442836714,
+      "err_signed_mean": -0.0024979637733409644,
+      "class_flips": 97,
+      "acc_enc_calibrated": 0.6763912723706791,
+      "class_flips_calibrated": 0
+    }
+  }
+}

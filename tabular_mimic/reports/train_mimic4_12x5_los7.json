@@ -1,0 +1,20 @@
+{
+  "tag": "mimic4_12x5_los7",
+  "dataset": "mimic4",
+  "grid": [
+    12,
+    5
+  ],
+  "target": "los7",
+  "n_static": 32,
+  "n_train": 25056,
+  "n_test": 5369,
+  "positive_rate": 0.23232944068838352,
+  "lr_val_auroc": 0.6487837900624319,
+  "lr_test_auroc": 0.6569007351359628,
+  "cnn_val_auroc": 0.7041547775795144,
+  "cnn_test_auroc": 0.7048719382654707,
+  "cnn_test_auprc": 0.4062925627475602,
+  "threshold": 0.48999999999999994,
+  "epochs_run": 45
+}

@@ -1,0 +1,25 @@
+{
+  "tag": "malaria_28",
+  "dataset": "malaria",
+  "img": 28,
+  "n_images": 27558,
+  "n_groups": 201,
+  "positive_rate": 0.5,
+  "mean": 0.4653235375881195,
+  "std": 0.2789127230644226,
+  "split_counts": {
+    "train": 19324,
+    "val": 4155,
+    "test": 4079
+  },
+  "split_positive_rate": {
+    "train": 0.49705030014489754,
+    "val": 0.4878459687123947,
+    "test": 0.5263544986516303
+  },
+  "split_groups": {
+    "train": 142,
+    "val": 31,
+    "test": 28
+  }
+}

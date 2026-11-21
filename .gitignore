@@ -1,0 +1,59 @@
+# =====================================================================
+# GitHub Safety & Data Protection Exclusions (.gitignore)
+# Strict compliance with PhysioNet Credentialed Data Use Agreement (DUA)
+# =====================================================================
+
+# --- Raw & Processed Datasets (NEVER COMMIT) ---
+**/data/
+data/raw/
+data/processed/
+*.csv.gz
+*.parquet
+cell_images/
+Parasitized/
+Uninfected/
+
+# --- Derived Patient-Level Arrays & Large Binary Checkpoints (> 10MB) ---
+*.npz
+*.npy
+*.pt
+*.pth
+*.joblib
+*.pkl
+*.h5
+*.bin
+
+# --- Intermediate Cache & Patient-Level Prediction Files ---
+**/reports/predictions_*.csv
+**/reports/cache_*/
+reports/cache_*/
+*.chunk_*.npy
+
+# --- Cryptographic Secret Keys & Certificates ---
+*.key
+*.secret
+*.pem
+*.pub
+*.priv
+id_rsa
+id_rsa.pub
+
+# --- Python Bytecode & Virtual Environments ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+logreg/
+
+# --- IDE, OS & Build Artifacts ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.log
+*.tmp

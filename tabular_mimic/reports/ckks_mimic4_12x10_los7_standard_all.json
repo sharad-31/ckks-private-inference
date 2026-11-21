@@ -1,0 +1,58 @@
+{
+  "tag": "mimic4_12x10_los7",
+  "dataset": "mimic4",
+  "grid": [
+    12,
+    10
+  ],
+  "preset": "standard",
+  "split": "all",
+  "threshold": 0.5099999999999999,
+  "n": 35794,
+  "auroc_plain": 0.7815416026029972,
+  "auroc_enc": 0.7815199118059588,
+  "acc_plain": 0.7466335139967593,
+  "acc_enc": 0.7462703246354138,
+  "logit_err_mean": 0.006447950861481884,
+  "logit_err_max": 0.013595046378287234,
+  "err_signed_mean": 0.0004598594745659954,
+  "class_flips": 65,
+  "sec_per_patient_wall": 0.03976905244005694,
+  "total_sec": 1423.4934630393982,
+  "workers": 8,
+  "per_split": {
+    "train": {
+      "n": 25056,
+      "auroc_plain": 0.7816710081139432,
+      "auroc_enc": 0.7816562528274454,
+      "acc_plain": 0.7470466155810983,
+      "acc_enc": 0.7469667943805874,
+      "logit_err_mean": 0.006432765055423857,
+      "logit_err_max": 0.013595046378287234,
+      "err_signed_mean": 0.00046888759674438413,
+      "class_flips": 42
+    },
+    "val": {
+      "n": 5369,
+      "auroc_plain": 0.7771907311006233,
+      "auroc_enc": 0.7771941869515516,
+      "acc_plain": 0.741478860122928,
+      "acc_enc": 0.7409200968523002,
+      "logit_err_mean": 0.006509682165944544,
+      "logit_err_max": 0.012998134627355107,
+      "err_signed_mean": 0.0005306539032361151,
+      "class_flips": 11
+    },
+    "test": {
+      "n": 5369,
+      "auroc_plain": 0.7852224529237906,
+      "auroc_enc": 0.7851778561750907,
+      "acc_plain": 0.749860309182343,
+      "acc_enc": 0.7483702737940026,
+      "logit_err_mean": 0.006457088537572379,
+      "logit_err_max": 0.013042823214037158,
+      "err_signed_mean": 0.00034693268804493336,
+      "class_flips": 12
+    }
+  }
+}

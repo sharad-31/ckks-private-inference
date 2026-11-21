@@ -1,0 +1,22 @@
+{
+  "tag": "malaria_28",
+  "dataset": "malaria",
+  "model": "lr",
+  "preset": "deep",
+  "split": "test",
+  "sign_iters": 2,
+  "threshold_logit": -0.5753641449035622,
+  "scale": 6.499500274658203,
+  "scale_pct": 100.0,
+  "n_overflow": 0,
+  "saturation_input": 0.5381515705157052,
+  "workers": 8,
+  "sec_per_patient_wall": 0.13518268181196935,
+  "total_sec": 551.410159111023,
+  "corr_out_vs_logit": 0.9892839773208242,
+  "n": 4079,
+  "class_flips": 0,
+  "acc_plain": 0.6763912723706791,
+  "acc_enc": 0.6763912723706791,
+  "saturated_fraction": 0.009316008825692572
+}

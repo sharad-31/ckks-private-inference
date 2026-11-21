@@ -1,0 +1,19 @@
+{
+  "tag": "malaria_28",
+  "dataset": "malaria",
+  "img": 28,
+  "n_train": 19324,
+  "n_test": 4079,
+  "positive_rate": 0.5,
+  "lr_val_auroc": 0.7145961382241989,
+  "lr_test_auroc": 0.8066315750900915,
+  "lr_test_acc": 0.6763912723706791,
+  "lr_threshold": 0.35999999999999993,
+  "cnn_val_auroc": 0.8177646879903261,
+  "cnn_test_auroc": 0.8568566954130227,
+  "cnn_test_acc": 0.7778867369453297,
+  "cnn_test_auprc": 0.8415868581778935,
+  "cnn_threshold": 0.5399999999999999,
+  "cnn_params": 457,
+  "epochs_run": 36
+}

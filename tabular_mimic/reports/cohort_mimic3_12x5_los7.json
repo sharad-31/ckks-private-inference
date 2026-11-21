@@ -1,0 +1,35 @@
+{
+  "tag": "mimic3_12x5_los7",
+  "dataset": "mimic3",
+  "grid": [
+    12,
+    5
+  ],
+  "target": "los7",
+  "n_stays": 22536,
+  "positive_rate": 0.25133120340788073,
+  "split_counts": {
+    "train": 15776,
+    "val": 3380,
+    "test": 3380
+  },
+  "vital_coverage": {
+    "heart_rate": 0.8355963791267306,
+    "resp_rate": 0.8353301384451545,
+    "spo2": 0.8355076322328718,
+    "sbp": 0.39088569400071,
+    "temp_c": 0.8263667021654242,
+    "dbp": 0.3908413205537806,
+    "mbp": 0.8351970181043663,
+    "gcs_motor": 0.4444000709975151,
+    "fio2": 0.5708200212992546,
+    "glucose": 0.8840521831735889
+  },
+  "vitals_in_grid": [
+    "heart_rate",
+    "resp_rate",
+    "spo2",
+    "sbp",
+    "temp_c"
+  ]
+}

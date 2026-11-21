@@ -1,0 +1,68 @@
+{
+  "tag": "malaria_28",
+  "dataset": "malaria",
+  "model": "lr",
+  "poly": 3,
+  "preset": "standard",
+  "split": "all",
+  "sec_per_patient_wall": 0.014593837776657494,
+  "total_sec": 402.1769814491272,
+  "workers": 8,
+  "poly_interval": 5.8953680992126465,
+  "poly_coefs": [
+    0.18237291849216683,
+    -0.003208569446080677
+  ],
+  "n": 27558,
+  "auroc_plain": 0.7360930235213696,
+  "auroc_enc": 0.7360765087941437,
+  "acc_plain": 0.6316133246244284,
+  "acc_enc": 0.6022933449452065,
+  "err_mean": 0.03163380598404577,
+  "err_max": 0.057671430647553756,
+  "err_signed_mean": -0.0006263995108725076,
+  "class_flips": 1858,
+  "acc_enc_calibrated": 0.631758473038682,
+  "class_flips_calibrated": 46,
+  "per_split": {
+    "train": {
+      "n": 19324,
+      "auroc_plain": 0.7249588501975794,
+      "auroc_enc": 0.724958593103373,
+      "acc_plain": 0.6266300972883461,
+      "acc_enc": 0.5985820741047402,
+      "err_mean": 0.03138588338758674,
+      "err_max": 0.05766972541616844,
+      "err_signed_mean": 0.001746352372358594,
+      "class_flips": 1394,
+      "acc_enc_calibrated": 0.6262678534464914,
+      "class_flips_calibrated": 31
+    },
+    "val": {
+      "n": 4155,
+      "auroc_plain": 0.7145961382241989,
+      "auroc_enc": 0.714547221531876,
+      "acc_plain": 0.6108303249097473,
+      "acc_enc": 0.5785800240673887,
+      "err_mean": 0.030752225881607087,
+      "err_max": 0.057671430647553756,
+      "err_signed_mean": -0.0046461747592715374,
+      "class_flips": 228,
+      "acc_enc_calibrated": 0.612274368231047,
+      "class_flips_calibrated": 8
+    },
+    "test": {
+      "n": 4079,
+      "auroc_plain": 0.8066315750900915,
+      "auroc_enc": 0.8065619030261302,
+      "acc_plain": 0.6763912723706791,
+      "acc_enc": 0.644030399607747,
+      "err_mean": 0.03370632904842602,
+      "err_max": 0.057647508088423005,
+      "err_signed_mean": -0.007772487089803579,
+      "class_flips": 236,
+      "acc_enc_calibrated": 0.6776170630056386,
+      "class_flips_calibrated": 7
+    }
+  }
+}
