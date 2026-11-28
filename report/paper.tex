@@ -21,10 +21,10 @@
 \title{Benchmarking Linear and Convolutional Models Under CKKS Homomorphic Encryption: Trade-Offs in Latency, Accuracy, and Decision Fidelity Across Tabular and Image Clinical Tasks}
 
 \author{
-\IEEEauthorblockN{Sharad Gupta, Swaraj Singh Pal, and Dr.\ Maroti Deshmukh}
+\IEEEauthorblockN{Dr.\ Maroti Deshmukh, Swaraj Singh Pal, and Sharad Gupta}
 \IEEEauthorblockA{Department of Computer Science and Engineering\\
 National Institute of Technology Uttarakhand, Srinagar (Garhwal), 246174, India\\
-\{bt24cse030, swarajpal, maroti\}@nituk.ac.in}
+\{maroti, swarajpal, bt24cse030\}@nituk.ac.in}
 }
 
 \maketitle
@@ -49,9 +49,9 @@ This architectural trade-off is critical in clinical informatics. In acute care 
 
 To address this challenge, this paper presents a unified privacy-preserving inference framework operating under the CKKS homomorphic encryption scheme, implemented using TenSEAL~\cite{tenseal2021} and Microsoft SEAL~\cite{seal2020}. We evaluate linear logistic regression (LR) and a shallow square-activation convolutional neural network (CNN) across two entirely independent clinical domains without data fusion. Our contributions are threefold:
 \begin{itemize}
-    \item \textbf{C1: Tabular ICU Length-of-Stay Inference.} We evaluate linear regression against a hybrid convolutional network on 22,536 MIMIC-III and 35,794 MIMIC-IV stays to predict prolonged hospitalization (length of stay $> 7$~days), analyzing $12 \times 10$ and $12 \times 5$ temporal grids with static patient branches.
-    \item \textbf{C2: Cellular Pathology Classification.} We compare linear regression and a 457-parameter convolutional network on 27,558 single-cell Giemsa-stained malaria microscopy images, dissecting the source of decision changes between polynomial sigmoid approximation error and cryptographic noise.
-    \item \textbf{C3: High-Throughput SIMD Batching and Encrypted Thresholding.} We design and benchmark a feature-major SIMD batching architecture packing up to 8,192 image samples into single ciphertext slots without homomorphic rotations, and evaluate server-side encrypted decision thresholding via iterative sign polynomials.
+    \item \textbf{Tabular ICU Length-of-Stay Inference:} We evaluate linear regression against a hybrid convolutional network on 22,536 MIMIC-III and 35,794 MIMIC-IV stays to predict prolonged hospitalization (length of stay $> 7$~days), analyzing $12 \times 10$ and $12 \times 5$ temporal grids with static patient branches.
+    \item \textbf{Cellular Pathology Classification:} We compare linear regression and a 457-parameter convolutional network on 27,558 single-cell Giemsa-stained malaria microscopy images, dissecting the source of decision changes between polynomial sigmoid approximation error and cryptographic noise.
+    \item \textbf{High-Throughput SIMD Batching and Encrypted Thresholding:} We design and benchmark a feature-major SIMD batching architecture packing up to 8,192 image samples into single ciphertext slots without homomorphic rotations, and evaluate server-side encrypted decision thresholding via iterative sign polynomials.
 \end{itemize}
 
 The remainder of this paper is organized as follows. Section~\ref{sec:related} surveys related literature on homomorphic neural inference, encrypted healthcare models, and clinical benchmarks. Section~\ref{sec:method} details the proposed methodology, including cryptographic primitives, tensor encoding, mathematical formulations, and SIMD architectures. Section~\ref{sec:experiment} presents the experimental framework, detailing datasets, preprocessing, model configurations, and metrics. Section~\ref{sec:results} analyzes empirical results across tabular and imaging tasks. Section~\ref{sec:limitations} presents limitations of the study. Section~\ref{sec:conclusion} concludes the paper and identifies directions for future work.
@@ -60,14 +60,17 @@ The remainder of this paper is organized as follows. Section~\ref{sec:related} s
 \section{Related Work}\label{sec:related}
 %% ======================================================================
 
-\textbf{Homomorphic Encryption and Encrypted Neural Networks.}
+\subsection{Homomorphic Encryption and Encrypted Neural Networks}
 Approximate arithmetic under homomorphic encryption was formalized by Cheon et al.~\cite{cheon2017} with the CKKS scheme, which introduced slot packing and modular rescaling to manage precision loss in floating-point operations. Early explorations of encrypted neural network evaluation, such as CryptoNets~\cite{cryptonets2016}, established the feasibility of evaluating shallow convolutional networks with square activations on encrypted MNIST digits, but required over 200~seconds per inference. Subsequent formulations by Xie et al.~\cite{xie2014} examined low-degree polynomial approximations for continuous activation functions, while Brutzkus et al.~\cite{brutzkus2019} developed low-latency representations that restructured tensor layouts to decrease latency to 2.2~seconds. To facilitate Python-level integration, Benaissa et al.~\cite{tenseal2021} introduced TenSEAL, which wraps Microsoft SEAL~\cite{seal2020} and provides native tensor primitives including im2col-based encrypted convolutions.
 
-\textbf{Privacy-Preserving Clinical Machine Learning.}
+\subsection{Privacy-Preserving Clinical Machine Learning}
 In medical domains, cryptographic privacy mechanisms have been investigated primarily for isolated linear models or federated training regimes. Kim et al.~\cite{kim2018} designed a secure logistic regression framework under approximate homomorphic encryption, demonstrating model training with least-squares polynomial approximations of the logistic sigmoid on genomic and clinical datasets. To support encrypted decision boundaries without revealing continuous risk scores to the client, Cheon et al.~\cite{cheon2019} developed an iterative numerical method based on composite sign polynomials for comparing encrypted floating-point values homomorphically. Despite these advances, prior encrypted medical systems have evaluated single model types in isolation, without investigating whether non-linear depth justifies its cryptographic overhead relative to linear baselines across heterogeneous patient modalities.
 
-\textbf{Clinical Time-Series and Cellular Pathology Benchmarks.}
+\subsection{Clinical Time-Series and Cellular Pathology Benchmarks}
 The clinical utility of electronic health record modeling has been established through standardized plaintext benchmarks. Harutyunyan et al.~\cite{harutyunyan2019} developed multitask deep learning benchmarks on the MIMIC-III database~\cite{mimiciii2016}, identifying in-hospital mortality, decompensation, phenotype classification, and length-of-stay estimation as foundational clinical targets. In pathology imaging, Rajaraman et al.~\cite{rajaraman2018} demonstrated that convolutional feature extractors improve parasite detection in thin blood smear images from the National Institutes of Health (NIH) malaria collection. These benchmark studies, along with the recent release of MIMIC-IV~\cite{mimiciv2023}, provide rigorously curated datasets, yet their evaluations remain entirely within plaintext computing environments without privacy protections.
+
+\subsection{Summary of Reviewed Literature}
+Table~\ref{tab:related} summarizes the reviewed studies, their key technical strengths, and the methodological boundary of each relative to this work.
 
 \begin{table*}[t]
 \caption{Reviewed Literature and Methodological Boundaries}
@@ -91,7 +94,7 @@ Rajaraman et al.\ (2018)~\cite{rajaraman2018} & Pre-trained deep CNNs for malari
 \end{tabular}
 \end{table*}
 
-\textbf{Research Gap.}
+\subsection{Research Gap}
 Within the surveyed literature, no prior study provides a unified comparative investigation of linear models against non-linear convolutional networks under the exact same homomorphic encryption framework across both clinical tabular time-series and pathology image datasets. Existing works evaluate either isolated linear regressions or complex deep vision networks on non-medical benchmarks. Furthermore, previous evaluations report aggregate discrimination metrics such as AUROC while omitting individual decision-level fidelity (class flips) on held-out test cohorts, leaving unexamined the interplay between circuit depth, approximation bias, and SIMD batch throughput.
 
 %% ======================================================================
@@ -100,9 +103,11 @@ Within the surveyed literature, no prior study provides a unified comparative in
 
 The proposed privacy-preserving inference system operates in a client--server architecture designed to execute both linear and shallow convolutional models without exposing plaintext clinical inputs or diagnostic outputs to the server. The workflow partitions computational responsibilities strictly according to key ownership: the client retains the secret key and performs data preprocessing, encoding, encryption, and post-decryption thresholding, while the server holds plaintext model parameters and executes homomorphic arithmetic over ciphertext representations.
 
+\subsection{Client--Server Workflow}
+
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ckks-private-inference/figures/fig_1_system_architecture.png}
+\includegraphics[width=\columnwidth]{../figures/fig_1.png}
 \caption{Client--server privacy-preserving inference workflow for linear and convolutional models under CKKS.}
 \label{fig:architecture}
 \end{figure}
@@ -127,14 +132,14 @@ To enable direct comparison, both classification architectures are expressed und
 h_{c,k} = \left( b_c + \sum_{i=1}^{k_h} \sum_{j=1}^{k_w} K_{c,i,j} \cdot x_{k+i-1,\, j} \right)^2
 \label{eq:conv}
 \end{equation}
-where $\mathbf{x} \in \mathbb{R}^{H \times W}$ is the normalized input feature tensor, $h_{c,k} \in \mathbb{R}$ is the latent non-linear activation for channel $c$ at spatial window position $k$, $\mathbf{K}_c \in \mathbb{R}^{k_h \times k_w}$ is the plaintext convolution kernel weight matrix for channel $c \in \{1, 2, 3, 4\}$, $b_c \in \mathbb{R}$ is the scalar convolution channel bias constant, $k_h$ and $k_w$ are spatial receptive filter dimensions, and the exponent constant $p = 2$ specifies the quadratic power activation computed at multiplicative level~2.
+where $\mathbf{x} \in \mathbb{R}^{H \times W}$ is the normalized input feature tensor, $h_{c,k} \in \mathbb{R}$ is the latent non-linear activation for channel $c$ at spatial window position $k$, $\mathbf{K}_c \in \mathbb{R}^{k_h \times k_w}$ is the plaintext convolution kernel weight matrix for channel $c \in \{1, 2, 3, 4\}$, $b_c \in \mathbb{R}$ is the scalar convolution channel bias constant, $k_h$ and $k_w$ are spatial receptive filter dimensions ($3 \times N$ for tabular temporal convolutions; $7 \times 7$ with stride~3 for image convolutions), and the exponent constant $p = 2$ specifies the quadratic power activation computed at multiplicative level~2.
 
 The latent activations across all channels and spatial windows are flattened and combined with an optional static patient vector $\mathbf{s} \in \mathbb{R}^S$ through a linear readout layer to yield the final logit~$z$:
 \begin{equation}
 z = \sum_{c=1}^{C} \sum_{k=1}^{K} w_{c,k} \cdot h_{c,k} + b_f + \mathbf{v}^T \mathbf{s} + b_s
 \label{eq:logit}
 \end{equation}
-where $h_{c,k}$ represents the latent quadratic feature map activations from~\eqref{eq:conv}, $\mathbf{s} \in \mathbb{R}^S$ is the static patient covariate vector, $w_{c,k} \in \mathbb{R}$ denotes the trained fully connected linear readout weights, $b_f \in \mathbb{R}$ is the scalar fully connected bias, $\mathbf{v} \in \mathbb{R}^S$ is the static feature linear weight vector, and $b_s \in \mathbb{R}$ is the static linear branch bias constant.
+where $h_{c,k}$ represents the latent quadratic feature map activations from~\eqref{eq:conv}, $\mathbf{s} \in \mathbb{R}^S$ is the static patient covariate vector ($S = 15$ for MIMIC-III; $S = 32$ for MIMIC-IV; omitted for pathology cell images), $w_{c,k} \in \mathbb{R}$ denotes the trained fully connected linear readout weights, $b_f \in \mathbb{R}$ is the scalar fully connected bias, $\mathbf{v} \in \mathbb{R}^S$ is the static feature linear weight vector, and $b_s \in \mathbb{R}$ is the static linear branch bias constant.
 
 This architectural formulation limits the convolutional network to exactly multiplicative depth three: level~1 computes the ciphertext--plaintext convolution and bias addition; level~2 computes the ciphertext--ciphertext squaring of feature maps; and level~3 evaluates the linear readout dot product. This design guarantees that the entire network executes without expensive bootstrapping operations.
 
@@ -144,21 +149,105 @@ Homomorphic evaluation of two-dimensional convolutions on encrypted vectors requ
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ckks-private-inference/figures/fig_2_im2col_vs_simd.png}
-\caption{Comparison of per-patient im2col slot layout and feature-major SIMD batch packing layout.}
+\includegraphics[width=\columnwidth]{../figures/fig_2.png}
+\caption{Comparison of (a) the per-sample im2col slot layout and (b) the feature-major SIMD batch packing layout.}
 \label{fig:encoding}
 \end{figure}
 
 \subsection{Feature-Major SIMD Batching Architecture}
 
-To eliminate the substantial latency and memory overhead imposed by homomorphic slot rotations, we introduce a feature-major SIMD batching architecture for high-throughput screening environments. As illustrated in Fig.~\ref{fig:encoding}(b), rather than packing spatial receptive fields of a single patient into one ciphertext, the client groups a cohort of $B = N/2$ patients together. For an image of dimension $H \times W$, the client allocates exactly $H \times W$ separate ciphertexts, where ciphertext $\mathrm{ct}_{r,c}$ stores the pixel value at spatial position $(r, c)$ for all $B$ patients simultaneously across its SIMD slots.
+\subsubsection{Motivation}
+The per-sample im2col encoding of Section~3.4 packs all receptive windows of one input into a single ciphertext. For a $28 \times 28$ image under the standard preset, the 64 windows of 64 slots each fill all 4,096 slots exactly, so one ciphertext serves exactly one image, and the sliding-window sums require slot rotations and therefore Galois keys. Each additional image costs another full encrypted evaluation.
 
-Under this layout, spatial convolutions, element-wise quadratic activations, and linear readouts are computed entirely through slot-wise ciphertext--plaintext multiplications and ciphertext additions. Crucially, no slot rotations or Galois keys are required. Every patient in the batch is processed in parallel within the same algebraic operations. This architecture reduces amortized per-sample run times by several orders of magnitude, transforming homomorphic inference from a high-latency sequential procedure into a high-throughput batch screening pipeline.
+To eliminate the substantial latency and memory overhead imposed by homomorphic slot rotations, we introduce a feature-major SIMD batching architecture for high-throughput screening environments. The design changes what a ciphertext represents: instead of holding all pixels of one image, each ciphertext holds a single pixel position for many images at once.
+
+\subsubsection{Packing Layout}
+As illustrated in Fig.~\ref{fig:encoding}(b), rather than packing spatial receptive fields of a single patient into one ciphertext, the client groups a cohort of $B = N/2$ patients together. For an image of dimension $H \times W$, the client allocates exactly $H \times W$ separate ciphertexts, where ciphertext $\mathrm{ct}_{r,c}$ stores the pixel value at spatial position $(r, c)$ for all $B$ patients simultaneously across its SIMD slots.
+
+The batch size equals the number of available slots, $B = N/2$: 4,096 images under the standard preset ($N = 8{,}192$) and 8,192 images under the precise and deep presets ($N = 16{,}384$). Slot $i$ of every ciphertext belongs to image $i$, so the $H \times W = 784$ ciphertexts of a $28 \times 28$ batch are formed as:
+\begin{equation}
+\mathrm{ct}_{r,c} = \mathrm{Enc}\bigl(x^{(1)}_{r,c},\; x^{(2)}_{r,c},\; \ldots,\; x^{(B)}_{r,c}\bigr), \quad 1 \leq r \leq H,\; 1 \leq c \leq W
+\label{eq:simd_pack}
+\end{equation}
+where $x^{(i)}_{r,c}$ is the standardized pixel value at position $(r, c)$ of image $i$. In Fig.~\ref{fig:encoding}(b) each column is one ciphertext and each row is one slot, that is, one image. Because the slots of a ciphertext are processed independently, every operation applied to the 784 ciphertexts is applied to all $B$ images at once.
+
+\subsubsection{Slot-Wise Server Evaluation}
+Under this layout, spatial convolutions, element-wise quadratic activations, and linear readouts are computed entirely through slot-wise operations: ciphertext--plaintext multiplications by the trained weights, ciphertext additions, and, for the square activation, one ciphertext--ciphertext multiplication. Crucially, no slot rotations or Galois keys are required. Every patient in the batch is processed in parallel within the same algebraic operations.
+
+For the logistic-regression model, the server forms one weighted sum of the 784 input ciphertexts, where each weight $w_{r,c}$ is a plaintext scalar:
+\begin{equation}
+\mathrm{ct}_{z} = \sum_{r=1}^{H} \sum_{c=1}^{W} w_{r,c} \cdot \mathrm{ct}_{r,c} + b
+\label{eq:simd_lr}
+\end{equation}
+For the convolutional network, window $k$ with top-left pixel $(r_k, c_k)$ is evaluated by combining the ciphertexts of the pixels it covers, again with plaintext scalar weights, and is then squared:
+\begin{equation}
+\mathrm{ct}_{h_{c,k}} = \left( b_c + \sum_{i=1}^{k_h} \sum_{j=1}^{k_w} K_{c,i,j} \cdot \mathrm{ct}_{r_k+i-1,\, c_k+j-1} \right)^2
+\label{eq:simd_conv}
+\end{equation}
+The image network uses four $7 \times 7$ kernels with stride~3 on a $28 \times 28$ image, so each channel has $8 \times 8 = 64$ windows and the batch yields $4 \times 64 = 256$ feature ciphertexts $\mathrm{ct}_{h_{c,k}}$, each holding the activations of all $B$ images. The readout of~\eqref{eq:logit} is then applied slot-wise, $\mathrm{ct}_{z} = \sum_{c,k} w_{c,k}\,\mathrm{ct}_{h_{c,k}} + b_f$, which produces a single output ciphertext whose slot $i$ holds the logit of image $i$. The circuit consumes the same three levels as the per-sample network (convolution, square, readout), as shown in Fig.~\ref{fig:simd_eval}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig_3_simd.png}
+\caption{Slot-wise evaluation of one SIMD batch: the server processes 784 pixel-position ciphertexts through convolution, square, and readout, and the client decrypts one logit per slot.}
+\label{fig:simd_eval}
+\end{figure}
+
+\subsubsection{Client Workflow and Batch Handling}
+The client standardizes all $B$ images with the training-set statistics, packs pixel position $(r, c)$ of every image into one slot vector, encrypts the 784 vectors, and uploads them in a single request. The server returns one output ciphertext. The client decrypts it, reads slot $i$ as the logit of image $i$, and applies the sigmoid and the validation threshold in the clear. A final batch with fewer than $B$ images leaves some slots unused, and these are discarded after decryption. Algorithm~1 (Table~\ref{tab:alg1}) summarizes the procedure.
+
+\begin{table}[t]
+\caption*{Algorithm 1. Feature-major SIMD batched inference (image CNN)}
+\label{tab:alg1}
+\centering
+\footnotesize
+\begin{tabular}{L{1.1cm} L{6.7cm}}
+\toprule
+\textbf{Party} & \textbf{Step} \\
+\midrule
+Client & 1. Standardize the $B$ images with train-only statistics. \\
+Client & 2. For every pixel position $(r, c)$, pack $(x^{(1)}_{r,c}, \ldots, x^{(B)}_{r,c})$ into the slots of one vector and encrypt it to obtain $\mathrm{ct}_{r,c}$ (784 ciphertexts). \\
+Client & 3. Send all $\mathrm{ct}_{r,c}$ to the server. \\
+Server & 4. For every channel $c$ and window $k$: compute $\mathrm{ct}_{h_{c,k}}$ with~\eqref{eq:simd_conv} (plaintext scalar multiplications and additions, then one square). \\
+Server & 5. Compute $\mathrm{ct}_z = \sum_{c,k} w_{c,k}\,\mathrm{ct}_{h_{c,k}} + b_f$. \\
+Server & 6. Optional (decision mode): apply the sign polynomial of~\eqref{eq:sign} to $\mathrm{ct}_z$. \\
+Server & 7. Return the single output ciphertext. \\
+Client & 8. Decrypt; for each slot $i$, apply the sigmoid and the threshold to obtain the class of image $i$. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In the encrypted-threshold mode of Section~3.6, the threshold $t$ and one scale $s$, shared by every image in the batch, are folded into the readout weights and bias before the sign polynomial is applied.
+
+\subsubsection{Advantages, Costs, and Trade-offs}
+This architecture reduces the amortized per-sample run time by more than an order of magnitude ($25.3\times$ to $51.7\times$ in Table~\ref{tab:simd}), transforming homomorphic inference from a high-latency sequential procedure into a high-throughput batch screening pipeline. The gain has three conditions, summarized in Table~\ref{tab:encoding_cmp}: the client must collect a batch before encrypting it, so single-request latency is not improved, only throughput; the threshold scale in decision mode is one value shared across the batch; and the number of input ciphertexts grows with the number of pixel positions (784 per batch) rather than with the number of images.
+
+\begin{table*}[t]
+\caption{Comparison of Per-Sample im2col and Feature-Major SIMD Encoding for $28 \times 28$ Image Inputs}
+\label{tab:encoding_cmp}
+\centering
+\footnotesize
+\begin{tabular}{L{3.5cm} L{5.8cm} L{5.8cm}}
+\toprule
+\textbf{Property} & \textbf{Per-sample im2col} & \textbf{Feature-major SIMD batch} \\
+\midrule
+What one ciphertext holds & All 64 receptive windows of one image (64 windows $\times$ 64 slots) & One pixel position of $B$ images (one image per slot) \\
+Ciphertexts per upload & 1 per image & 784 per batch of $B$ images \\
+Images per encrypted evaluation & 1 & $B = 4{,}096$ ($N=8{,}192$) or $8{,}192$ ($N=16{,}384$) \\
+Rotations and Galois keys & Required & Not required \\
+Convolution arithmetic & Slot-wise multiplication, then rotation-based sum reduction & Plaintext-scalar multiplication and ciphertext addition only \\
+CNN wall-clock per image (standard, 2 workers) & 90.5~ms & 3.37~ms \\
+LR wall-clock per image (standard, 2 workers) & 52.5~ms & 1.01~ms \\
+Client requirement & Encrypts each image independently & Collects up to $B$ images; shares one threshold scale per batch in decision mode \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 \subsection{Polynomial Sigmoid Approximations and Encrypted Decision Thresholding}
 
 While evaluating the sigmoid function in plaintext at the client provides exact classification without approximation error, specific deployment scenarios require the server to emit classified decisions directly without disclosing continuous predictive scores. We investigate two polynomial mechanisms to address this requirement.
 
+\subsubsection{Polynomial Sigmoid Approximation}
 First, for linear models evaluated on ciphertexts, the standard logistic sigmoid $\sigma(z) = 1/(1 + e^{-z})$ is replaced by odd least-squares polynomial approximations of degree~3 and degree~5 defined over the empirical logit interval $[-B_z, B_z]$:
 \begin{equation}
 \begin{aligned}
@@ -169,12 +258,22 @@ P_5(z) &= 0.5 + c_1 z + c_3 z^3 + c_5 z^5
 \end{equation}
 where $z \in [-B_z, B_z]$ is the continuous scalar logit evaluated on ciphertexts, $P_3(z)$ and $P_5(z) \in (0, 1)$ are the resulting polynomial probability approximations, the baseline probability offset is fixed at $0.5$, for degree-3 fitting on the empirical interval $B_z \approx 5.905$ the constants are $a_1 \approx 0.182204$ and $a_3 \approx -0.003197$, and for degree-5 fitting on the identical interval the constants are $c_1 \approx 0.218298$, $c_3 \approx -0.008025$, and $c_5 \approx 0.0001245$.
 
+\subsubsection{Encrypted Sign-Polynomial Decision}
 Second, to evaluate hard binary decisions directly over encrypted logits without decrypting continuous intermediate values, the server evaluates an encrypted sign polynomial. The validation decision threshold $\tau$ is mapped into a logit threshold $t = \mathrm{logit}(\tau)$. The logit is centered and scaled by a factor $s$: $u = (z - t)/s$, such that $u \in [-1, 1]$. The server then applies an iterative composite polynomial approximation of the sign function, $f(u) = 1.5u - 0.5u^3$, evaluated recursively:
 \begin{equation}
 y_{\mathrm{enc}} = f\bigl(f\bigl((z - t)/s\bigr)\bigr), \quad \text{where } f(u) = 1.5u - 0.5u^3
 \label{eq:sign}
 \end{equation}
-where $z \in \mathbb{R}$ is the predicted continuous model logit, $u = (z - t)/s$ is the normalized input bounded within $[-1, 1]$, and $y_{\mathrm{enc}} \in [-1, 1]$ is the final decrypted saturated output variable. The decision threshold constant $t = \mathrm{logit}(\tau) = \ln(\tau/(1-\tau))$, where $\tau \in (0, 1)$ is the optimal probability classification threshold tuned on the validation cohort. The scaling constant $s$ is a positive normalizer ensuring $|u| \leq 1$, calibrated as $s = 1.05 \times \max|z_{\mathrm{train}} - t|$ for maximum (100\%) scale. The composite polynomial $f(u)$ uses linear coefficient $c_{\mathrm{lin}} = 1.5 = 3/2$ and cubic coefficient $c_{\mathrm{cub}} = -0.5 = -1/2$, with a mathematical overflow boundary of $|u| > \sqrt{3} \approx 1.732$.
+where $z \in \mathbb{R}$ is the predicted continuous model logit, $u = (z - t)/s$ is the normalized input bounded within $[-1, 1]$, and $y_{\mathrm{enc}} \in [-1, 1]$ is the final decrypted saturated output variable.
+
+\subsubsection{Decision Threshold Constant}
+The parameter $t$ is the exact decision boundary in logit space, defined as $t = \mathrm{logit}(\tau) = \ln(\tau/(1-\tau))$, where $\tau \in (0, 1)$ is the optimal probability classification threshold tuned on the validation cohort. Specifically: for tabular MIMIC-III LR, $\tau = 0.27$ ($t \approx -0.995$) on $12\times 10$ and $\tau = 0.24$ ($t \approx -1.153$) on $12\times 5$; for tabular MIMIC-III CNN, $\tau = 0.43$ ($t \approx -0.282$) on $12\times 10$ and $\tau = 0.47$ ($t \approx -0.120$) on $12\times 5$; for tabular MIMIC-IV LR, $\tau = 0.22$ ($t \approx -1.266$) on $12\times 10$ and $\tau = 0.25$ ($t \approx -1.099$) on $12\times 5$; for tabular MIMIC-IV CNN, $\tau = 0.51$ ($t \approx +0.040$) on $12\times 10$ and $\tau = 0.49$ ($t \approx -0.040$) on $12\times 5$; for malaria pathology images, $\tau = 0.36$ ($t \approx -0.575$) for LR and $\tau = 0.55$ ($t \approx +0.201$) for CNN. To eliminate the need for an extra multiplicative level to subtract $t$ on ciphertexts, the server folds $t$ and scale $s$ directly into the affine readout weights: $w^* = w/s$ and $b^* = (b - t)/s$.
+
+\subsubsection{Scaling Constant}
+The parameter $s$ is a positive normalizer ensuring $|u| \leq 1$. It is calibrated against the training logit distribution as $s = 1.05 \times \max|z_{\mathrm{train}} - t|$ for maximum (100\%) scale, $s = 1.05 \times \mathrm{Percentile}_{99}(|z_{\mathrm{train}} - t|)$ for $p_{99}$ scale, or $s = 1.05 \times \mathrm{Percentile}_{95}(|z_{\mathrm{train}} - t|)$ for $p_{95}$ scale, where $1.05$ represents a 5\% safety margin.
+
+\subsubsection{Sign-Polynomial Constants and Overflow Bounds}
+The composite polynomial $f(u)$ uses linear coefficient $c_{\mathrm{lin}} = 1.5 = 3/2$ and cubic coefficient $c_{\mathrm{cub}} = -0.5 = -1/2$. The mathematical overflow boundary of this polynomial is $|u| > \sqrt{3} \approx 1.732$; inputs exceeding $\pm 1.732$ diverge from the sign function. Decrypted outputs satisfying $|y| \geq 0.9$ are defined as saturated, indicating that the patient's continuous risk score is hidden from the client.
 
 %% ======================================================================
 \section{Experimental Framework}\label{sec:experiment}
@@ -186,16 +285,18 @@ This section details the datasets, preprocessing pipelines, cryptographic config
 
 The experimental framework benchmarks inference across two independent clinical domains: longitudinal ICU physiological time-series and digital cellular pathology images.
 
-\textbf{MIMIC-III and MIMIC-IV Clinical Databases.}
+\subsubsection{MIMIC-III and MIMIC-IV Clinical Databases}
 Tabular cohorts are derived from the Medical Information Mart for Intensive Care databases: MIMIC-III (v1.4)~\cite{mimiciii2016} and MIMIC-IV (v2.2)~\cite{mimiciv2023}. Following standardized critical care benchmarking guidelines~\cite{harutyunyan2019}, cohort inclusion criteria select adult patients (age $\geq 18$~years at admission) on their first ICU admission who have a minimum stay duration of 48~hours. The clinical objective is to predict prolonged ICU length of stay, defined as total hospitalization exceeding seven days (LOS $> 7$~days). For MIMIC-III, the extracted cohort comprises 22,536 stays with an overall positive rate of 25.13\%. For MIMIC-IV, the cohort comprises 35,794 stays with an overall positive rate of 23.23\%. Splits are partitioned deterministically at the patient level (70\% train, 15\% validation, 15\% test) to prevent data leakage across ICU encounters.
 
-\textbf{NIH Malaria Cell Images Dataset.}
+\subsubsection{NIH Malaria Cell Images Dataset}
 The cellular imaging benchmark utilizes the National Library of Medicine (NIH) Giemsa-stained thin blood smear collection~\cite{rajaraman2018}. The dataset contains 27,558 single-cell images, balanced equally between parasitized erythrocytes (\textit{Plasmodium falciparum}, label~1) and uninfected red blood cells (label~0). The images originate from 201 individual patient slide smears. To prevent optimistic bias resulting from slide-level color and staining correlations, data partitioning is conducted strictly at the slide/patient group level: 142~groups (19,324 images) form the training split, 31~groups (4,155 images) form the validation split, and 28~groups (4,079 images) form the held-out test split.
 
 \subsection{Data Processing and Pipeline Construction}
 
+\subsubsection{Tabular ICU Records}
 For tabular records, the first 48~hours of each ICU stay are segmented into twelve 4-hour temporal bins. Within each bin, the mean value of physiological vitals is computed. We evaluate two grid resolutions: a $12 \times 10$ grid capturing ten physiological variables (heart rate, respiratory rate, peripheral oxygen saturation SpO$_2$, systolic blood pressure, body temperature, diastolic blood pressure, mean blood pressure, Glasgow Coma Scale motor score, fraction of inspired oxygen FiO$_2$, and blood glucose), and a compact $12 \times 5$ grid retaining the first five vital signs. Implausible physiological values are marked missing. Missing temporal bins are forward-filled; remaining unobserved bins are imputed using training-split means. Normalization statistics (mean and standard deviation) are computed strictly from the training cohort, and standardized values are clipped to $[-5, 5]$. Static demographic and admission covariates (age, sex, admission type, first care unit, and 24-hour mean vitals) are encoded as static feature vectors (15~features for MIMIC-III, 32~features for MIMIC-IV).
 
+\subsubsection{Pathology Images}
 For pathology images, cells are converted to grayscale and downsampled from variable resolutions to a uniform $28 \times 28$ spatial matrix using Lanczos resampling. Pixel intensities are scaled to $[0, 1]$, standardized using the training-split mean (0.4653) and standard deviation (0.2789), and clipped to $[-5, 5]$. In accordance with the study protocol, no data augmentation, synthetic oversampling, or test-time transformations were applied to either dataset.
 
 \subsection{Cryptographic Presets and Scale Management}
@@ -242,13 +343,14 @@ Image CNN (Malaria) & Conv($1\to4$, $7\times7$, stride~3) $\to$ square $\to$ FC(
 
 \subsection{Computational Environment and Tooling}
 
-All homomorphic encryption operations and timing evaluations were executed on a workstation equipped with an AMD Ryzen~7 260 processor (8~physical cores, 16~logical threads, base frequency 3.8~GHz) and 24.0~GB of visible physical system memory running Microsoft Windows~11 Home (64-bit, Build~26300). Plaintext neural models were trained using PyTorch~2.12.0 on an NVIDIA GeForce RTX~5050 Laptop GPU (8~GB VRAM). Encrypted inference was executed on the CPU using TenSEAL~0.3.17 compiled against Microsoft SEAL~3.6. Python~3.12.7 served as the execution runtime. Parallel inference was orchestrated using Python's multiprocessing module across 8~worker processes for per-sample tabular and image runs, and a controlled 2-worker configuration for comparative SIMD batching benchmarks.
+All homomorphic encryption operations and timing evaluations were executed on a workstation equipped with an AMD Ryzen~7 260 processor (8~physical cores, 16~logical threads, base frequency 3.8~GHz) and 24.0~GB of visible physical system memory running Microsoft Windows~11 Home (64-bit, Build~26300). Plaintext neural models were trained using PyTorch~2.12.0 on an NVIDIA GeForce RTX 5050 Laptop GPU (8~GB VRAM). Encrypted inference was executed on the CPU using TenSEAL~0.3.17 compiled against Microsoft SEAL~3.6. Python~3.12.7 served as the execution runtime. Parallel inference was orchestrated using Python's multiprocessing module across 8~worker processes for per-sample tabular and image runs, and a controlled 2-worker configuration for comparative SIMD batching benchmarks.
 
 \subsection{Evaluation Metrics and Mathematical Formulations}
 
 Model discrimination and clinical utility are quantified using the Area Under the Receiver Operating Characteristic curve (AUROC) and Area Under the Precision--Recall Curve (AUPRC). In addition, accuracy, precision, recall, and F1-score are computed at validation-tuned decision thresholds $\tau$. Plaintext accuracy is evaluated alongside an always-negative majority baseline equal to $1 - p_{\mathrm{pos}}$. To quantify cryptographic fidelity, we report three metrics:
 
-\textit{(i)~Maximum and Mean Absolute Logit Error:} Evaluated over all cohort samples between encrypted logit $z_{\mathrm{enc}}$ and plaintext logit $z_{\mathrm{plain}}$:
+\subsubsection{Maximum and Mean Absolute Logit Error}
+Evaluated over all cohort samples between encrypted logit $z_{\mathrm{enc}}$ and plaintext logit $z_{\mathrm{plain}}$:
 \begin{equation}
 \begin{aligned}
 \Delta_{z,i} &= |z_{\mathrm{enc},i} - z_{\mathrm{plain},i}|, \\
@@ -257,16 +359,18 @@ Model discrimination and clinical utility are quantified using the Area Under th
 \end{aligned}
 \label{eq:logiterr}
 \end{equation}
-where $z_{\mathrm{enc},i} \in \mathbb{R}$ is the decrypted scalar logit output for patient sample $i$, $z_{\mathrm{plain},i} \in \mathbb{R}$ is the reference plaintext logit computed with 64-bit floating-point precision, $\Delta_{z,i} \geq 0$ is the sample-level absolute logit error, and $M$ denotes the total sample evaluation count.
+where $z_{\mathrm{enc},i} \in \mathbb{R}$ is the decrypted scalar logit output for patient sample $i$, $z_{\mathrm{plain},i} \in \mathbb{R}$ is the reference plaintext logit computed with 64-bit floating-point precision, $\Delta_{z,i} \geq 0$ is the sample-level absolute logit error, and $M$ denotes the total sample evaluation count ($M = 22{,}536$ for MIMIC-III; $M = 35{,}794$ for MIMIC-IV; $M = 27{,}558$ for malaria pathology images; or $M = 4{,}079$ for the test split).
 
-\textit{(ii)~Empirical Class Flips:} The count of evaluation samples whose classified binary decision changes after homomorphic evaluation at decision threshold $\tau$:
+\subsubsection{Empirical Class Flips}
+The count of evaluation samples whose classified binary decision changes after homomorphic evaluation at decision threshold $\tau$:
 \begin{equation}
 \mathrm{Flip}_i = \mathbb{I}\bigl((z_{\mathrm{enc},i} \geq t) \neq (z_{\mathrm{plain},i} \geq t)\bigr), \;\; t = \ln\!\left(\frac{\tau}{1-\tau}\right)
 \label{eq:flips}
 \end{equation}
-where $\mathrm{Flip}_i \in \{0, 1\}$ is a binary indicator variable, $\mathbb{I}(\cdot)$ is the indicator function, and $t = \mathrm{logit}(\tau)$ is the scalar decision threshold in logit space. A decision flip occurs if and only if $\min(z_{\mathrm{plain}}, z_{\mathrm{enc}}) \leq t < \max(z_{\mathrm{plain}}, z_{\mathrm{enc}})$.
+where $\mathrm{Flip}_i \in \{0, 1\}$ is a binary indicator variable, $\mathbb{I}(\cdot)$ is the indicator function, and $t = \mathrm{logit}(\tau)$ is the scalar decision threshold in logit space. A decision flip occurs if and only if $\min(z_{\mathrm{plain}}, z_{\mathrm{enc}}) \leq t < \max(z_{\mathrm{plain}}, z_{\mathrm{enc}})$, which proves mathematically that decisions can flip only when the plaintext score falls within the local encryption error band $|z_{\mathrm{plain}} - t| \leq \Delta_z$.
 
-\textit{(iii)~Saturation Fraction:} For encrypted thresholding, the percentage of test samples whose decrypted output lies within 0.1 of $\pm 1$ ($|y| \geq 0.9$), indicating effective hiding of the continuous prognostic score.
+\subsubsection{Saturation Fraction}
+For encrypted thresholding, the percentage of test samples whose decrypted output lies within 0.1 of $\pm 1$ ($|y| \geq 0.9$), indicating effective hiding of the continuous prognostic score.
 
 %% ======================================================================
 \section{Results and Analysis}\label{sec:results}
@@ -276,7 +380,7 @@ This section presents empirical results across the three core contributions: tab
 
 \subsection{Tabular ICU Length-of-Stay Inference (Contribution~1)}
 
-\textbf{Plaintext Predictive Performance.}
+\subsubsection{Plaintext Predictive Performance}
 Table~\ref{tab:tabular_plain} reports discrimination and classification metrics on the held-out test splits for MIMIC-III (3,380~stays) and MIMIC-IV (5,369~stays), alongside a static-only LR baseline. Fig.~\ref{fig:tabular_perf} plots AUROC trajectories and accuracy against the majority-class baseline.
 
 \begin{table*}[t]
@@ -309,14 +413,14 @@ MIMIC-IV (12$\times$5) & Hybrid CNN & 0.7049 & 0.4063 & 0.6331 & 0.3439 & 0.6743
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ckks-private-inference/figures/fig_3_tabular_performance.png}
+\includegraphics[width=\columnwidth]{../figures/fig_3.png}
 \caption{Tabular test performance across cohorts and grid resolutions: (a) AUROC trajectories, and (b) test accuracy compared to the always-negative majority baseline.}
 \label{fig:tabular_perf}
 \end{figure}
 
 As reported in Table~\ref{tab:tabular_plain} and illustrated in Fig.~\ref{fig:tabular_perf}, incorporating temporal physiological grids yields substantial predictive improvements over the static-only baseline ($+0.031$ to $+0.117$ AUROC). However, the additional benefit of convolutional feature extraction over linear regression on the grid is modest. On MIMIC-III, the hybrid CNN improves AUROC by only $+0.0071$ on the $12 \times 10$ grid and $+0.0047$ on the $12 \times 5$ grid; both 95\% bootstrap confidence intervals overlap zero, indicating that the gain is indistinguishable from test sampling noise. On MIMIC-IV, the CNN gain is statistically distinguishable ($+0.0112$ and $+0.0175$ AUROC), yet absolute discrimination remains comparable. Furthermore, on MIMIC-III $12 \times 10$, the linear model achieves a higher AUPRC than the CNN (0.4534 vs.\ 0.4463). Because the prolonged LOS target exhibits class imbalance (prevalence of 25.1\% in MIMIC-III and 23.2\% in MIMIC-IV), neither model surpasses the naive majority-class baseline accuracy (0.7432 on MIMIC-III and 0.7724 on MIMIC-IV), establishing that AUROC and AUPRC serve as the reliable measures of clinical discrimination.
 
-\textbf{Encrypted Inference Fidelity and Latency.}
+\subsubsection{Encrypted Inference Fidelity and Latency}
 Table~\ref{tab:tabular_enc} summarizes homomorphic inference fidelity across all 16 tabular experimental configurations, documenting test-split decision flips, logit errors, and wall-clock run times. Fig.~\ref{fig:flips} visualizes test-split class flips, while Fig.~\ref{fig:logiterr} shows the distribution of absolute logit errors.
 
 \begin{table*}[t]
@@ -353,14 +457,14 @@ MIMIC-IV 12$\times$5 & CNN & standard & 17/5,369 & 1.8e-2 & 0.7049 $\to$ 0.7047 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ckks-private-inference/figures/fig_4_class_flips.png}
+\includegraphics[width=\columnwidth]{../figures/fig_4.png}
 \caption{Empirical class flips on held-out test cohorts across models and cryptographic presets.}
 \label{fig:flips}
 \end{figure}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ckks-private-inference/figures/fig_5_logit_error_distribution.png}
+\includegraphics[width=\columnwidth]{../figures/fig_5.png}
 \caption{Empirical distribution of absolute logit error $|z_{\mathrm{enc}} - z_{\mathrm{plain}}|$ for tabular and image models under standard and precise presets.}
 \label{fig:logiterr}
 \end{figure}
@@ -371,7 +475,7 @@ Crucially, run-time measurements demonstrate a significant cost disparity. As sh
 
 \subsection{Cellular Pathology Image Classification (Contribution~2)}
 
-\textbf{Plaintext Image Classification.}
+\subsubsection{Plaintext Image Classification}
 Table~\ref{tab:image_plain} presents test-split metrics for the NIH Malaria cell collection (4,079 test images across 28 slide groups). Fig.~\ref{fig:malaria_perf} displays comparative diagnostic metrics alongside test confusion matrices.
 
 \begin{table}[t]
@@ -391,14 +495,14 @@ CNN (457) & .8568 & .8415 & .7796 & .7508 & .8701 & .8060 & .55 \\
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ckks-private-inference/figures/fig_6_malaria_classification.png}
+\includegraphics[width=\columnwidth]{../figures/fig_6.png}
 \caption{Malaria pathology image classification on held-out test split: (a) diagnostic performance metrics, (b) CNN confusion matrix, and (c) LR confusion matrix.}
 \label{fig:malaria_perf}
 \end{figure}
 
 In contrast to tabular ICU records, the spatial feature extraction capabilities of the convolutional network provide a decisive diagnostic advantage on microscopic cell images. As reported in Table~\ref{tab:image_plain} and Fig.~\ref{fig:malaria_perf}, the 457-parameter CNN achieves an AUROC of 0.8568, an accuracy of 0.7796, and an F1-score of 0.8060 on the test split, substantially outperforming the pixel-level logistic regression model (AUROC 0.8066, accuracy 0.6764, F1-score 0.7562). The CNN delivers an absolute AUROC gain of $+0.0502$ (95\% bootstrap CI [0.0376, 0.0621]) and an accuracy improvement of $+0.1032$. Examination of the confusion matrices in Fig.~\ref{fig:malaria_perf}(b)--(c) indicates that while the linear model achieves high sensitivity (recall 0.9534 at threshold $\tau = 0.36$, $t \approx -0.575$), it suffers from severe false-positive inflation, misclassifying 1,220 of 1,932 uninfected cells (false-positive rate of 63.1\%). The CNN (evaluated at threshold $\tau = 0.55$, $t \approx +0.201$) lowers the false-positive rate to 32.1\% while maintaining strong parasite sensitivity (recall 0.8701), confirming that local receptive field convolutions are essential for resolving intracellular parasite morphology.
 
-\textbf{Per-Sample Encrypted Image Fidelity.}
+\subsubsection{Per-Sample Encrypted Image Fidelity}
 Table~\ref{tab:image_enc} reports homomorphic inference fidelity for both models under the per-sample im2col encoding, evaluating exact sigmoid decoding against polynomial approximations.
 
 \begin{table}[t]
@@ -419,17 +523,17 @@ LR (785) & Deg-5 & precise & 96/0* & 770/0* & 2.1e-2 & 49.1 \\
 \bottomrule
 \end{tabular}
 \vspace{1mm}
-\scriptsize *Format: uncalibrated/calibrated threshold flips.
+\scriptsize Entries of the form $a / b^*$ give the number of flips with the original threshold and, marked by *, with the threshold recalibrated in polynomial space (Section~5.2.3).
 \end{table}
 
 Table~\ref{tab:image_enc} indicates that under the precise preset, both the CNN and exact LR reproduce 100\% of plaintext test decisions (0~flips out of 4,079 test images and 0~flips across the entire cohort of 27,558 images). The CNN exhibits a maximum logit error of $2.2 \times 10^{-4}$ while the LR achieves $2.3 \times 10^{-5}$. Under the standard preset, the CNN induces 2~test flips (33~cohort flips) while the LR induces 3~test flips (19~cohort flips). Crucially, the run-time penalty of the CNN over LR is only $1.7\times$ under standard (21.9~ms vs.\ 13.0~ms) and $1.9\times$ under precise (79.4~ms vs.\ 42.1~ms). In this imaging domain, incurring a less-than-$2\times$ latency overhead is thoroughly justified by the substantial diagnostic gain ($+0.050$ AUROC and $+0.103$ accuracy).
 
-\textbf{Polynomial Sigmoid Bias Versus Cryptographic Noise.}
+\subsubsection{Polynomial Sigmoid Bias Versus Cryptographic Noise}
 When the sigmoid is evaluated under homomorphic encryption for the linear model, substantial decision discrepancies arise if uncalibrated thresholds are employed. As reported in Table~\ref{tab:image_enc}, applying the degree-3 polynomial sigmoid under the standard preset with the original threshold $t \approx -0.575$ induces 240 test-split class flips, causing test accuracy to degrade from 0.6764 to 0.6426. For the degree-5 polynomial under the precise preset, 96 test decisions flip. However, when the decision threshold is calibrated within the polynomial space, flips drop precipitously to 5 for degree-3 and exactly 0 for degree-5, restoring test accuracy to 0.6771 and 0.6764, respectively. This demonstrates conclusively that decision degradation in homomorphic neural networks stems overwhelmingly from polynomial approximation bias rather than cryptographic noise, establishing that threshold recalibration is mandatory when non-linear activations are approximated algebraically.
 
 \subsection{High-Throughput SIMD Batching and Encrypted Thresholding (Contribution~3)}
 
-\textbf{Throughput and Communication Benchmarks.}
+\subsubsection{Throughput and Communication Benchmarks}
 Table~\ref{tab:simd} reports computational throughput, active CPU evaluation time, upload payloads, and amortized latency for feature-major SIMD batching across all 27,558 malaria images under controlled 2-worker benchmarking. Fig.~\ref{fig:latency} compares wall-clock scaling between per-patient and SIMD-batched executions.
 
 \begin{table*}[t]
@@ -454,14 +558,14 @@ CNN (exact) & deep & 8,192 & 7.73 & 15.14 & 0.187 & 0/4,079 & 25.3$\times$ \\
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ckks-private-inference/figures/fig_7_latency_comparison.png}
+\includegraphics[width=\columnwidth]{../figures/fig_7.png}
 \caption{Computational execution cost: (a) tabular per-patient latency with 8~workers, and (b) controlled image inference comparing 2-worker per-patient mode against SIMD batching.}
 \label{fig:latency}
 \end{figure}
 
 As documented in Table~\ref{tab:simd} and Fig.~\ref{fig:latency}(b), feature-major SIMD batching achieves transformative throughput speedups over per-sample execution. Under identical 2-worker execution, the batched linear model processes images at 1.01~ms wall-clock time per sample (1.46~ms CPU time), achieving a $51.7\times$ speedup over the 2-worker per-patient baseline (52.5~ms). The batched convolutional network requires 3.37~ms wall-clock time per sample (5.82~ms CPU time), delivering a $26.8\times$ speedup over its per-patient counterpart (90.5~ms). Under SIMD batching, the wall-clock latency ratio between CNN and LR widens from $1.7\times$ to $3.3\times$. This occurs because the linear model eliminates all internal slot permutations, performing purely parallel slot-wise vector dot products, whereas the CNN must evaluate four distinct convolution channels and an element-wise squaring. Crucially, SIMD batching incurred zero test-split decision flips under the standard preset, demonstrating that batch parallelization introduces no cryptographic degradation.
 
-\textbf{Encrypted Decision Thresholding.}
+\subsubsection{Encrypted Decision Thresholding}
 Table~\ref{tab:threshold} summarizes server-side encrypted threshold evaluation via recursive degree-3 sign polynomials under the deep preset (7~multiplicative levels). Fig.~\ref{fig:threshold} illustrates the trade-off between output saturation and class flips.
 
 \begin{table}[t]
@@ -484,7 +588,7 @@ CNN Batch & $p_{95}$ & 27,558 & 18/4,079 & 23.0\% & 281 & 7.7 \\
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ckks-private-inference/figures/fig_8_threshold_tradeoff.png}
+\includegraphics[width=\columnwidth]{../figures/fig_8.png}
 \caption{Trade-off between output saturation (score privacy) and decision flips under iterative sign-polynomial thresholding.}
 \label{fig:threshold}
 \end{figure}
@@ -517,22 +621,26 @@ The cross-modality comparison in Table~\ref{tab:synthesis} establishes clear arc
 \section{Limitations}\label{sec:limitations}
 %% ======================================================================
 
-\begin{enumerate}
-    \item[(1)] \textbf{Single-Seed Determinism and Empirical Split Sensitivity:} All neural networks and homomorphic inference routines were evaluated under a single deterministic initialization (seed~42) and a single realization of encryption noise. While bootstrap resampling was used to assess test-split variability, run-to-run seed variance and stochastic ciphertext noise distributions were not quantified. Furthermore, the malaria test cohort comprises 28~slide groups whose baseline AUROC (0.8568) exceeded validation performance (0.8178), indicating sensitivity to slide partition composition.
+\subsection{Single-Seed Determinism and Empirical Split Sensitivity}
+All neural networks and homomorphic inference routines were evaluated under a single deterministic initialization (seed~42) and a single realization of encryption noise. While bootstrap resampling was used to assess test-split variability, run-to-run seed variance and stochastic ciphertext noise distributions were not quantified. Furthermore, the malaria test cohort comprises 28~slide groups whose baseline AUROC (0.8568) exceeded validation performance (0.8178), indicating sensitivity to slide partition composition.
 
-    \item[(2)] \textbf{Input Downsampling and Tabular Measurement Sparsity:} Microscopy images were downsampled to $28 \times 28$ grayscale without data augmentation to accommodate single-ciphertext packing constraints, discarding chromatic and high-frequency textural features that may enhance pathology classification. In the tabular domain, MIMIC-III records exhibited severe measurement sparsity (only 39\% of stays had observed arterial pressure and 44\% had GCS scores), and static covariate feature dimensions differed between database versions (15 in MIMIC-III vs.\ 32 in MIMIC-IV).
+\subsection{Input Downsampling and Tabular Measurement Sparsity}
+Microscopy images were downsampled to $28 \times 28$ grayscale without data augmentation to accommodate single-ciphertext packing constraints, discarding chromatic and high-frequency textural features that may enhance pathology classification. In the tabular domain, MIMIC-III records exhibited severe measurement sparsity (only 39\% of stays had observed arterial pressure and 44\% had GCS scores), and static covariate feature dimensions differed between database versions (15 in MIMIC-III vs.\ 32 in MIMIC-IV).
 
-    \item[(3)] \textbf{Derived Batch Latency and Aggregated CPU Profiles:} Although image per-sample versus SIMD-batched execution times were strictly controlled at 2~worker processes, direct per-batch wall-clock latencies and isolated per-patient CPU cycles were not logged independently by the evaluation harness on the host system. Consequently, per-batch latency was derived analytically from aggregate cohort throughput, and CPU time breakdowns are available only for batched vision pipelines.
+\subsection{Derived Batch Latency and Aggregated CPU Profiles}
+Although image per-sample versus SIMD-batched execution times were strictly controlled at 2~worker processes, direct per-batch wall-clock latencies and isolated per-patient CPU cycles were not logged independently by the evaluation harness on the host system. Consequently, per-batch latency was derived analytically from aggregate cohort throughput, and CPU time breakdowns are available only for batched vision pipelines.
 
-    \item[(4)] \textbf{Incomplete Cryptographic Scope and Residual Boundary Leakage:} Server-side encrypted threshold evaluation was implemented for the batched CNN and per-sample models, leaving batched linear thresholding unexamined. Moreover, low-degree sign polynomials saturated at most 23.0\% of test outputs under aggressive scaling; non-saturated outputs remain strictly monotonic functions of the underlying logit, allowing the client to reconstruct continuous predictive scores and precluding formal cryptographic score privacy.
-\end{enumerate}
+\subsection{Incomplete Cryptographic Scope and Residual Boundary Leakage}
+Server-side encrypted threshold evaluation was implemented for the batched CNN and per-sample models, leaving batched linear thresholding unexamined. Moreover, low-degree sign polynomials saturated at most 23.0\% of test outputs under aggressive scaling; non-saturated outputs remain strictly monotonic functions of the underlying logit, allowing the client to reconstruct continuous predictive scores and precluding formal cryptographic score privacy.
 
 %% ======================================================================
 \section{Conclusion and Future Work}\label{sec:conclusion}
 %% ======================================================================
 
+\subsection{Conclusion}
 This study presented a systematic comparative evaluation of linear logistic regression and shallow square-activation convolutional neural networks under the CKKS homomorphic encryption scheme across clinical time-series and cellular pathology tasks. In the tabular ICU domain (MIMIC-III and MIMIC-IV), the convolutional network achieved a marginal test AUROC improvement of only 0.005 to 0.018 over linear regression while incurring a $3.1\times$ to $4.8\times$ run-time penalty, establishing that linear models provide superior operational utility on structured medical records. In the pathology imaging domain (NIH Malaria), the convolutional network delivered decisive diagnostic gains ($+0.050$ AUROC, $+0.103$ accuracy) at an acceptable $1.7\times$ to $1.9\times$ latency overhead. Across both domains, the precise CKKS preset ($N = 16{,}384$) reproduced plaintext classifications with virtually zero decision flips. Feature-major SIMD batching reduced per-image inference latency to 1.01~ms for linear and 3.37~ms for convolutional architectures, while encrypted sign-polynomial thresholding demonstrated an inherent trade-off between numerical saturation and decision flips.
 
+\subsection{Future Work}
 Future research will extend this framework to multi-seed evaluations with clustered patient-level uncertainty estimates across diverse hospital cohorts. We will investigate higher-resolution pathology representations using packed multi-ciphertext convolutional pipelines and explore adaptive bootstrapping mechanisms. Finally, we will analyze formal differential privacy bounds for unsaturated homomorphic thresholding to prevent continuous score leakage at client endpoints.
 
 %% ======================================================================
