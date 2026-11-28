@@ -9,45 +9,45 @@
   "batch_size": 8192,
   "n_batches": 4,
   "workers": 2,
-  "total_sec_wall": 279.68441939353943,
-  "sec_per_patient_wall": 0.010148937491600967,
-  "cpu_ms_per_patient_encrypt": 3.438219690852349,
-  "cpu_ms_per_patient_eval": 16.44598959284585,
+  "total_sec_wall": 212.6977801322937,
+  "sec_per_patient_wall": 0.007718186375364457,
+  "cpu_ms_per_patient_encrypt": 2.542016113243045,
+  "cpu_ms_per_patient_eval": 12.541576717093493,
   "upload_ciphertexts_per_batch": 784,
-  "upload_MB_per_patient": 0.18741736497568762,
+  "upload_MB_per_patient": 0.18746934146164454,
   "download_MB_per_patient": 3.8071267871398506e-05,
-  "scale": 3.2941625118255615,
+  "scale": 3.267876148223877,
   "scale_pct": 95.0,
   "n_overflow": 281,
   "sign_iters": 2,
   "saturation_input": 0.5381515705157052,
-  "corr_out_vs_logit": 0.1648230979141077,
+  "corr_out_vs_logit": 0.16484739950274085,
   "n": 27558,
-  "class_flips": 117,
-  "acc_plain": 0.7518324987299514,
-  "acc_enc": 0.7482400754771754,
-  "saturated_fraction": 0.19493432034255026,
+  "class_flips": 115,
+  "acc_plain": 0.7532476957689237,
+  "acc_enc": 0.7497278467232745,
+  "saturated_fraction": 0.19649466579577618,
   "per_split": {
     "train": {
       "n": 19324,
-      "class_flips": 85,
-      "acc_plain": 0.7506727385634444,
-      "acc_enc": 0.7469985510246325,
-      "saturated_fraction": 0.18924653280894224
+      "class_flips": 84,
+      "acc_plain": 0.7516042227282136,
+      "acc_enc": 0.7479817843096668,
+      "saturated_fraction": 0.19188573794245498
     },
     "val": {
       "n": 4155,
       "class_flips": 13,
-      "acc_plain": 0.7316486161251504,
-      "acc_enc": 0.7290012033694344,
-      "saturated_fraction": 0.18435619735258724
+      "acc_plain": 0.7350180505415163,
+      "acc_enc": 0.7323706377858002,
+      "saturated_fraction": 0.18459687123947052
     },
     "test": {
       "n": 4079,
-      "class_flips": 19,
-      "acc_plain": 0.7778867369453297,
-      "acc_enc": 0.7737190487864672,
-      "saturated_fraction": 0.2326550625153224
+      "class_flips": 18,
+      "acc_plain": 0.7796028438342731,
+      "acc_enc": 0.7756803138024025,
+      "saturated_fraction": 0.2304486393723952
     }
   }
 }

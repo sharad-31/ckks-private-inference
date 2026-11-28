@@ -150,7 +150,7 @@ def main():
         conv_b=sd["conv.bias"].tolist(),
         fc_conv_w=sd["fc_conv.weight"].reshape(C.CHANNELS, C.N_WINDOWS).tolist(),
         static_w=sd["fc_static.weight"][0].tolist(),
-        bias=float(sd["fc_conv.bias"] + sd["fc_static.bias"]),
+        bias=float((sd["fc_conv.bias"] + sd["fc_static.bias"]).item()),
         threshold=thr,
         grid=list(C.GRID),
         channels=C.CHANNELS,

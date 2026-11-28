@@ -121,6 +121,7 @@ def main():
     C.DATASET = args.dataset
     C.N_VITALS = args.vitals
     C.TARGET = args.target
+    C.RAW = C.ROOT / "data" / "raw" / C.DATASET
     C.GRID = (C.N_BINS, C.N_VITALS)
     C.KERNEL_W = C.N_VITALS
     C.VITALS_ALL = {v: ids[C.DATASET] for v, ids in C.VITAL_IDS.items()}

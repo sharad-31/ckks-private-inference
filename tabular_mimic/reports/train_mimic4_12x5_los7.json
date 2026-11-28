@@ -13,8 +13,8 @@
   "lr_val_auroc": 0.6487837900624319,
   "lr_test_auroc": 0.6569007351359628,
   "cnn_val_auroc": 0.7041547775795144,
-  "cnn_test_auroc": 0.7048719382654707,
-  "cnn_test_auprc": 0.4062925627475602,
+  "cnn_test_auroc": 0.7048717409347242,
+  "cnn_test_auprc": 0.4062924857357768,
   "threshold": 0.48999999999999994,
   "epochs_run": 45
 }

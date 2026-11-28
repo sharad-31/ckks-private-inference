@@ -12,9 +12,9 @@
   "positive_rate": 0.23232944068838352,
   "lr_val_auroc": 0.6487837900624319,
   "lr_test_auroc": 0.6569007351359628,
-  "cnn_val_auroc": 0.7771907311006233,
-  "cnn_test_auroc": 0.7852224529237906,
-  "cnn_test_auprc": 0.5106001892343326,
+  "cnn_val_auroc": 0.7771909230923414,
+  "cnn_test_auroc": 0.785222650254537,
+  "cnn_test_auprc": 0.5106004402119981,
   "threshold": 0.5099999999999999,
   "epochs_run": 23
 }

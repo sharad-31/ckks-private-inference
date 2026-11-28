@@ -10,11 +10,11 @@
   "n_train": 15776,
   "n_test": 3380,
   "positive_rate": 0.25133120340788073,
-  "lr_val_auroc": 0.6023415958111159,
+  "lr_val_auroc": 0.6023413556228083,
   "lr_test_auroc": 0.6037123191170859,
-  "cnn_val_auroc": 0.6497004851803815,
-  "cnn_test_auroc": 0.6417314402389269,
-  "cnn_test_auprc": 0.3997435809070574,
+  "cnn_val_auroc": 0.6497016861219196,
+  "cnn_test_auroc": 0.6417291470985353,
+  "cnn_test_auprc": 0.39974362427722676,
   "threshold": 0.4699999999999999,
   "epochs_run": 60
 }

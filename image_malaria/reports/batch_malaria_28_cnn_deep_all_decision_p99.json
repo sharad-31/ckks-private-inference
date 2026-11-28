@@ -9,45 +9,45 @@
   "batch_size": 8192,
   "n_batches": 4,
   "workers": 2,
-  "total_sec_wall": 269.4184672832489,
-  "sec_per_patient_wall": 0.009776415824198015,
-  "cpu_ms_per_patient_encrypt": 3.355500495471009,
-  "cpu_ms_per_patient_eval": 15.779822500292418,
+  "total_sec_wall": 221.52088475227356,
+  "sec_per_patient_wall": 0.008038351286460322,
+  "cpu_ms_per_patient_encrypt": 2.521440835569739,
+  "cpu_ms_per_patient_eval": 13.019141182600825,
   "upload_ciphertexts_per_batch": 784,
-  "upload_MB_per_patient": 0.18742541606792945,
+  "upload_MB_per_patient": 0.18748245649176284,
   "download_MB_per_patient": 3.8071267871398506e-05,
-  "scale": 5.972747802734375,
+  "scale": 5.932731628417969,
   "scale_pct": 99.0,
   "n_overflow": 54,
   "sign_iters": 2,
   "saturation_input": 0.5381515705157052,
-  "corr_out_vs_logit": 0.16169566427176632,
+  "corr_out_vs_logit": 0.1613360323407338,
   "n": 27558,
   "class_flips": 30,
-  "acc_plain": 0.7518324987299514,
-  "acc_enc": 0.7511067566586835,
-  "saturated_fraction": 0.04771754118586254,
+  "acc_plain": 0.7532476957689237,
+  "acc_enc": 0.7525219536976558,
+  "saturated_fraction": 0.047028086218158065,
   "per_split": {
     "train": {
       "n": 19324,
       "class_flips": 23,
-      "acc_plain": 0.7506727385634444,
-      "acc_enc": 0.7497930035189402,
-      "saturated_fraction": 0.044297246946801906
+      "acc_plain": 0.7516042227282136,
+      "acc_enc": 0.7507244876837094,
+      "saturated_fraction": 0.04357275926309253
     },
     "val": {
       "n": 4155,
       "class_flips": 3,
-      "acc_plain": 0.7316486161251504,
-      "acc_enc": 0.7318892900120337,
-      "saturated_fraction": 0.05006016847172082
+      "acc_plain": 0.7350180505415163,
+      "acc_enc": 0.7352587244283996,
+      "saturated_fraction": 0.049819494584837545
     },
     "test": {
       "n": 4079,
       "class_flips": 4,
-      "acc_plain": 0.7778867369453297,
-      "acc_enc": 0.7769061044373621,
-      "saturated_fraction": 0.06153468987496936
+      "acc_plain": 0.7796028438342731,
+      "acc_enc": 0.7786222113263055,
+      "saturated_fraction": 0.060554057367001715
     }
   }
 }

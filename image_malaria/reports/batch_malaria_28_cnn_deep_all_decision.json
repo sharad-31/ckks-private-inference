@@ -1,0 +1,53 @@
+{
+  "tag": "malaria_28",
+  "dataset": "malaria",
+  "model": "cnn",
+  "poly": 0,
+  "preset": "deep",
+  "split": "all",
+  "decision": true,
+  "batch_size": 8192,
+  "n_batches": 4,
+  "workers": 2,
+  "total_sec_wall": 216.24119329452515,
+  "sec_per_patient_wall": 0.00784676657575024,
+  "cpu_ms_per_patient_encrypt": 2.510227566317694,
+  "cpu_ms_per_patient_eval": 12.757445196687021,
+  "upload_ciphertexts_per_batch": 784,
+  "upload_MB_per_patient": 0.18747190187967194,
+  "download_MB_per_patient": 3.8071267871398506e-05,
+  "scale": 23.12089729309082,
+  "scale_pct": 100.0,
+  "n_overflow": 0,
+  "sign_iters": 2,
+  "saturation_input": 0.5381515705157052,
+  "corr_out_vs_logit": 0.9928862767253037,
+  "n": 27558,
+  "class_flips": 0,
+  "acc_plain": 0.7532476957689237,
+  "acc_enc": 0.7532476957689237,
+  "saturated_fraction": 0.0008708904855214457,
+  "per_split": {
+    "train": {
+      "n": 19324,
+      "class_flips": 0,
+      "acc_plain": 0.7516042227282136,
+      "acc_enc": 0.7516042227282136,
+      "saturated_fraction": 0.0009314841647691989
+    },
+    "val": {
+      "n": 4155,
+      "class_flips": 0,
+      "acc_plain": 0.7350180505415163,
+      "acc_enc": 0.7350180505415163,
+      "saturated_fraction": 0.0004813477737665463
+    },
+    "test": {
+      "n": 4079,
+      "class_flips": 0,
+      "acc_plain": 0.7796028438342731,
+      "acc_enc": 0.7796028438342731,
+      "saturated_fraction": 0.000980632507967639
+    }
+  }
+}
